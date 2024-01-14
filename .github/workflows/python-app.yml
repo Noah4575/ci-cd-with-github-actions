@@ -41,11 +41,12 @@ jobs:
         tags: noah4575/git_lab2:noah
         labels: ${{ steps.meta.outputs.labels }}
 
+
     - name: Run tests
       run: |
         docker run --name test_container -d noah4575/git_lab2:noah
         docker exec test_container python -m unittest discover
-
+    
     - name: Push to Docker Hub
       if: success()
       uses: docker/build-push-action@v2

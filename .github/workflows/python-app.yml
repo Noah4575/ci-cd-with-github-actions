@@ -35,14 +35,14 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
         with:
-          dockerfile: ./Dockerfile
+          file: ./Dockerfile
           push: true
           tags: noah4575/git_lab2:noah
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Run tests
         run: |
-          docker run --name test_container -d noah4575/git_lab2:latest
+          docker run --name test_container -d noah4575/git_lab2:noah
           docker exec test_container python -m unittest discover
 
       - name: Push to Docker Hub
@@ -51,7 +51,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: noah4575/git_lab2:latest
+          tags: noah4575/git_lab2:noah
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Debug Info

@@ -43,7 +43,7 @@ jobs:
 
       - name: Run tests
         run: |
-          docker run --name test_container -d noah4575/git_lab2:noah
+          docker run --name test_container -d noah4575/git_lab2:latest
           docker exec test_container python -m unittest discover
 
       - name: Push to Docker Hub
@@ -52,7 +52,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: noah4575/git_lab2:noah
+          tags: noah4575/git_lab2:latest
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Debug Info

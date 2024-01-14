@@ -5,7 +5,7 @@ name: CICD
 
 on:
   push:
-    branches: [ "noah" ]
+    branches: ["noah"]
 
 jobs:
   push_to_registry:
@@ -13,48 +13,47 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout the repo
-      uses: actions/checkout@v4
+      - name: Checkout the repo
+        uses: actions/checkout@v4
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
-    - name: Login to DockerHub
-      uses: docker/login-action@v1 
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_TOKEN }}
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
 
-    - name: Extract metadata (tags, labels) for Docker
-      id: meta
-      uses: docker/metadata-action@v1
-      with:
-        images: noah4575/git_lab2
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v1
+        with:
+          images: noah4575/git_lab2
 
-    - name: Build and push
-      id: docker_build
-      uses: docker/build-push-action@v1
-      with:
-        context: .
-        file: ./Dockerfile
-        push: true
-        tags: noah4575/git_lab2:noah
-        labels: ${{ steps.meta.outputs.labels }}
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v1
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: noah4575/git_lab2:noah
+          labels: ${{ steps.meta.outputs.labels }}
 
+      - name: Run tests
+        run: |
+          docker run --name test_container -d noah4575/git_lab2:noah
+          docker exec test_container python -m unittest discover
 
-    - name: Run tests
-      run: |
-        docker run --name test_container -d noah4575/git_lab2:noah
-        docker exec test_container python -m unittest discover -s tests -p "test_*.py" -v
-        
-    - name: Push to Docker Hub
-      if: success()
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        push: true
-        tags: noah4575/git_lab2:noah
-        labels: ${{ steps.meta.outputs.labels }}
+      - name: Push to Docker Hub
+        if: success()
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: noah4575/git_lab2:noah
+          labels: ${{ steps.meta.outputs.labels }}
 
       - name: Debug Info
         run: |
